@@ -1,0 +1,10 @@
+
+# Ignore backend build files
+/socialhub-backend/target/
+
+# Ignore frontend build files
+/socialhub-frontend/node_modules/
+.socialhub-frontend/.next/
+
+# Ignore user uploads
+/socialhub-backend/uploads/

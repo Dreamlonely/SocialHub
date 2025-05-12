@@ -1,0 +1,65 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column; 
+}
+
+header {
+    background-color: forestgreen;
+    color: black;
+    padding: 10px;
+    text-align: center;
+}
+
+.header ul {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+}
+
+.header ul li {
+  margin: 0 10px;
+}
+
+.header ul li a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+.header ul li a.active {
+  text-decoration: underline;
+}
+
+
+button {
+    background-color: forestgreen;
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 50px 50px 50px 50px;
+  }
+
+  button:hover {
+    background-color: rgba(34, 139, 34, 0.786);
+  }
+
+  
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .footer {
+    margin-top: auto; 
+    background-color: forestgreen; 
+    color: black;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%; 
+  }

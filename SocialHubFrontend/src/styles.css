@@ -1,0 +1,233 @@
+/* Global styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #013a63; /* Marine Blue */
+  color: white;
+}
+
+/* ---------------------- */
+/* Keycloak login styles */
+/* ---------------------- */
+#kc-header-wrapper {
+  display: none;
+}
+
+#kc-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#kc-form-wrapper {
+  background-color: #014f86;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+button, input[type="submit"] {
+  background-color: #00b4d8;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover, input[type="submit"]:hover {
+  background-color: #0096c7;
+}
+
+/* ---------------------- */
+/* Navbar styles          */
+/* ---------------------- */
+.navbar {
+  width: 12rem;
+  background-color: #013a63;
+  padding: 1.5rem;
+  position: fixed;
+  height: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: #014f86;
+  color: #00b4d8;
+}
+
+.nav-link.active {
+  background-color: #014f86;
+  color: #00b4d8;
+  font-weight: bold;
+  border-radius: 0.5rem;
+}
+
+/* ---------------------- */
+/* Main content container */
+/* ---------------------- */
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 12rem;
+  background-color: #013a63;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Post Header now has Username + Caption */
+.post-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.post-username {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.post-caption {
+  font-size: 16px;
+  color: #ffffff;
+  margin-bottom: 1px;
+}
+
+/* Image appears below username & caption */
+.post-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Keeps actions at the bottom */
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.like-button, .comment-button {
+  background: #00b4d8;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.like-button:hover, .comment-button:hover {
+  background: #0096c7;
+}
+
+.following-list input {
+  width: 80%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-section h3 {
+  color: #ffffff; /* Same color as the caption */
+}
+
+.comment-section textarea {
+  width: 80%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.comment-section .comment-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.comment-section .comment-button {
+  margin-top: 0; /* Remove top margin */
+  margin-left: 1rem; /* Position next to textarea */
+  border: 1px solid #00b4d8; /* Light Marine Blue */
+  border-radius: 1rem;
+}
+
+.comment-section ul li {
+  color: #ffffff; /* Same color as the caption */
+}
+
+/* ---------------------- */
+/* Logout Button          */
+/* ---------------------- */
+.logout-link {
+  background: none;
+  border: none;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  width: 100%;
+  border-radius: 0.5rem;
+}
+
+.logout-link:hover {
+  background-color: #014f86;
+  color: #00b4d8;
+}

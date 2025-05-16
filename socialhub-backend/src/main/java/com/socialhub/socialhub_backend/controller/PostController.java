@@ -69,18 +69,42 @@ public class PostController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable Long id, @RequestBody PostDto request) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostDto> updatePostWithImage(
+            @PathVariable Long id,
+            @RequestParam("content") String content,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam("keycloakId") String keycloakId) {
+
         try {
-            PostDto updatedPost = postService.updatePost(id, request);
+            UUID uuid = UUID.fromString(keycloakId);
+            PostDto existingPost = postService.getPostById(id)
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
+
+            String fileName = existingPost.getImagePath();
+            if (image != null && !image.isEmpty()) {
+                validateImage(image);
+                // Slett forrige bilde
+                if (fileName != null) deleteImage(fileName);
+                fileName = saveImage(image);
+            }
+
+            PostDto postDto = new PostDto();
+            postDto.setContent(content);
+            postDto.setImagePath(fileName);
+            postDto.setKeycloakId(uuid);
+
+            PostDto updatedPost = postService.updatePost(id, postDto);
             return ResponseEntity.ok(updatedPost);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {

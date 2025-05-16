@@ -10,7 +10,6 @@ export const FeedProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const { keycloak, authenticated, loading: authLoading } = useAuth();
 
-  // Fetch posts from backend
   const fetchPosts = useCallback(async () => {
     if (!authenticated || !keycloak?.token) {
       console.log("Skipping fetch: Not authenticated or no token");
@@ -21,16 +20,20 @@ export const FeedProvider = ({ children }) => {
     setError(null);
 
     try {
-      console.log("Fetching posts with token:", keycloak.token.substring(0, 20) + "...");
-      const response = await api.get("/posts");
-      console.log("Posts fetched:", response.data);
+      const keycloakId = keycloak.tokenParsed.sub;
+      const response = await api.get("/posts", {
+        params: { keycloakId },
+      });
 
       const fetchedPosts = response.data.map((post) => ({
         id: post.id,
-        user: post.username || "Unknown User",
+        user: post.user || "Unknown User",
         caption: post.content,
-        image: post.imagePath ? `http://localhost:8080/images/${post.imagePath}` : null,
-        likes: 0,
+        image: post.imagePath
+            ? `http://localhost:8080/images/${post.imagePath}`
+            : null,
+        likes: post.likes ?? 0,
+        liked: post.liked ?? false,
         comments: [],
       }));
 
@@ -43,26 +46,38 @@ export const FeedProvider = ({ children }) => {
     }
   }, [authenticated, keycloak]);
 
-  // Add post locally
-  const addPost = useCallback((newPost) => {
-    setPosts((prevPosts) => [newPost, ...prevPosts]);
-  }, []);
-
-  // Delete post locally
-  const deletePost = useCallback((postId) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-  }, []);
-
-  // Fetch posts when authenticated and ready
   useEffect(() => {
     if (!authLoading && authenticated && keycloak?.token) {
-      console.log("✅ Authenticated and ready. Fetching posts...");
       fetchPosts();
     }
   }, [authLoading, authenticated, keycloak, fetchPosts]);
 
+  const addPost = useCallback((newPost) => {
+    setPosts((prevPosts) => [newPost, ...prevPosts]);
+  }, []);
+
+  const deletePost = useCallback((postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+  }, []);
+
+  const toggleLikeLocally = useCallback((postId) => {
+    setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+            post.id === postId
+                ? {
+                  ...post,
+                  liked: !post.liked,
+                  likes: post.liked ? post.likes - 1 : post.likes + 1,
+                }
+                : post
+        )
+    );
+  }, []);
+
   return (
-      <FeedContext.Provider value={{ posts, loading, error, setPosts, fetchPosts }}>
+      <FeedContext.Provider
+          value={{ posts, loading, error, setPosts, fetchPosts, addPost, deletePost, toggleLikeLocally }}
+      >
         {children}
       </FeedContext.Provider>
   );

@@ -155,7 +155,11 @@ const PersonalizedFeed = () => {
               </div>
 
               <div className="post-actions">
-                <LikeButton initialLikes={post.likes} />
+                <LikeButton
+                    postId={post.id}
+                    initialLikes={post.likes}
+                    initiallyLiked={post.liked}
+                />
                 <button
                   className="comment-button"
                   onClick={() => toggleCommentSection(post.id)}

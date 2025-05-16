@@ -24,10 +24,10 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        List<PostDto> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<List<PostDto>> getAllPosts(@RequestParam UUID keycloakId) {
+        return ResponseEntity.ok(postService.getAllPosts(keycloakId));
     }
+
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto request) {
@@ -123,6 +123,21 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<Void> toggleLike(@PathVariable Long id, @RequestParam String keycloakId) {
+        try {
+            UUID uuid = UUID.fromString(keycloakId);
+            postService.toggleLike(id, uuid);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build(); // Invalid UUID
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // Post/user not found
+        }
+    }
+
+
 
     // --- Helper Methods ---
 

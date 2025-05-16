@@ -8,11 +8,13 @@ import com.socialhub.socialhub_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 public class PostService {
@@ -25,11 +27,31 @@ public class PostService {
 
     private static final String UPLOAD_DIR = "uploads/images/";
 
-    public List<PostDto> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
-                .map(this::toPostDto)
+    public List<PostDto> getAllPosts(UUID keycloakId) {
+        User user = userRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return postRepository.findAll().stream()
+                .map(post -> toPostDto(post, user))
                 .collect(Collectors.toList());
+    }
+
+    public void toggleLike(Long postId, UUID keycloakId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = userRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Set<User> likedUsers = post.getLikedBy();
+
+        if (likedUsers.contains(user)) {
+            likedUsers.remove(user);
+        } else {
+            likedUsers.add(user);
+        }
+
+        post.setLikedBy(likedUsers);
+        postRepository.save(post);
     }
 
     public Optional<PostDto> getPostById(Long id) {
@@ -82,14 +104,42 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    private PostDto toPostDto(Post post) {
-        return new PostDto(
+    // Brukt når vi vet hvem den innloggede brukeren er (f.eks. for liked status)
+    private PostDto toPostDto(Post post, User currentUser) {
+        PostDto dto = new PostDto(
                 post.getId(),
                 post.getContent(),
                 post.getUser().getKeycloakId(),
                 post.getImagePath(),
                 post.getCreatedAt(),
-                post.getUser().getUsername() // use username for display and ownership check
+                post.getUser().getUsername()
         );
+
+        if (post.getLikedBy() != null) {
+            dto.setLikes(post.getLikedBy().size());
+            dto.setLiked(post.getLikedBy().contains(currentUser));
+        } else {
+            dto.setLikes(0);
+            dto.setLiked(false);
+        }
+
+        return dto;
+    }
+
+    // Fallback hvis vi ikke har tilgang på bruker (brukes av create/update/getById)
+    private PostDto toPostDto(Post post) {
+        PostDto dto = new PostDto(
+                post.getId(),
+                post.getContent(),
+                post.getUser().getKeycloakId(),
+                post.getImagePath(),
+                post.getCreatedAt(),
+                post.getUser().getUsername()
+        );
+
+        dto.setLikes(post.getLikedBy() != null ? post.getLikedBy().size() : 0);
+        dto.setLiked(false); // fallback: ukjent om brukeren har likt
+
+        return dto;
     }
 }

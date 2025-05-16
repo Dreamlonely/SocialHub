@@ -1,27 +1,29 @@
 package com.socialhub.socialhub_backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class PostDto {
+
     private Long id;
-    @NotBlank(message = "Content cannot be blank")
     private String content;
-    @NotNull(message = "KeycloakId cannot be null")
     private UUID keycloakId;
     private String imagePath;
     private LocalDateTime createdAt;
-    private String username; // Added username field
+    private String user;
+    private int likes;
+    private boolean liked;
 
-    // Constructors
     public PostDto() {}
 
-    public PostDto(String content, UUID keycloakId) {
+    public PostDto(Long id, String content, UUID keycloakId, String imagePath,
+                   LocalDateTime createdAt, String user) {
+        this.id = id;
         this.content = content;
         this.keycloakId = keycloakId;
+        this.imagePath = imagePath;
+        this.createdAt = createdAt;
+        this.user = user;
     }
 
     public PostDto(String content, UUID keycloakId, String imagePath) {
@@ -30,69 +32,29 @@ public class PostDto {
         this.imagePath = imagePath;
     }
 
-    public PostDto(Long id, String content, UUID keycloakId, String imagePath, LocalDateTime createdAt) {
-        this.id = id;
-        this.content = content;
-        this.keycloakId = keycloakId;
-        this.imagePath = imagePath;
-        this.createdAt = createdAt;
-    }
+    // Getters and setters
 
-    public PostDto(Long id, String content, UUID keycloakId, String imagePath, LocalDateTime createdAt, String username) {
-        this.id = id;
-        this.content = content;
-        this.keycloakId = keycloakId;
-        this.imagePath = imagePath;
-        this.createdAt = createdAt;
-        this.username = username;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public UUID getKeycloakId() { return keycloakId; }
+    public void setKeycloakId(UUID keycloakId) { this.keycloakId = keycloakId; }
 
-    public String getContent() {
-        return content;
-    }
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public UUID getKeycloakId() {
-        return keycloakId;
-    }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
 
-    public void setKeycloakId(UUID keycloakId) {
-        this.keycloakId = keycloakId;
-    }
+    public int getLikes() { return likes; }
+    public void setLikes(int likes) { this.likes = likes; }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public boolean isLiked() { return liked; }
+    public void setLiked(boolean liked) { this.liked = liked; }
 }

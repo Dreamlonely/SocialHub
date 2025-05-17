@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
 import api from '../api/api';
-import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
+import { useFeed } from '../context/FeedContext';
 
 const LikeButton = ({ postId, initialLikes = 0, initiallyLiked = false }) => {
+  const { keycloak } = useAuth();
+  const { updatePost } = useFeed();
+
   const [likes, setLikes] = useState(initialLikes);
   const [hasLiked, setHasLiked] = useState(initiallyLiked);
-  const { toggleLikeLocally } = useFeed();
-  const { keycloak } = useAuth();
 
   const handleLike = async () => {
     try {
-      await api.post(`/posts/${postId}/like`, null, {
-        params: { keycloakId: keycloak.tokenParsed.sub }
+      const keycloakId = keycloak?.tokenParsed?.sub;
+      const response = await api.post(`/posts/${postId}/like`, null, {
+        params: { keycloakId },
       });
 
-      // Optimistisk oppdatering
-      toggleLikeLocally(postId);
-      setHasLiked(!hasLiked);
-      setLikes((prev) => hasLiked ? prev - 1 : prev + 1);
+      if (response.status === 200) {
+        const updatedLikes = hasLiked ? likes - 1 : likes + 1;
+        setLikes(updatedLikes);
+        setHasLiked(!hasLiked);
 
+        // Oppdater FeedContext hvis ønskelig
+        updatePost({
+          id: postId,
+          likes: updatedLikes,
+          liked: !hasLiked,
+        });
+      }
     } catch (error) {
       console.error("Feil ved liking:", error);
     }

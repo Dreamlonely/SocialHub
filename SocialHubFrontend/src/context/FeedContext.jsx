@@ -20,7 +20,7 @@ export const FeedProvider = ({ children }) => {
     setError(null);
 
     try {
-      const keycloakId = keycloak.tokenParsed.sub;
+      const keycloakId = keycloak?.tokenParsed?.sub;
       const response = await api.get("/posts", {
         params: { keycloakId },
       });
@@ -60,24 +60,20 @@ export const FeedProvider = ({ children }) => {
     setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
   }, []);
 
-  const toggleLikeLocally = useCallback((postId) => {
+  const updatePost = useCallback((updatedPostOrFn) => {
     setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-            post.id === postId
-                ? {
-                  ...post,
-                  liked: !post.liked,
-                  likes: post.liked ? post.likes - 1 : post.likes + 1,
-                }
-                : post
-        )
+        prevPosts.map((post) => {
+          const update = typeof updatedPostOrFn === "function"
+              ? updatedPostOrFn(post)
+              : updatedPostOrFn;
+
+          return post.id === update.id ? { ...post, ...update } : post;
+        })
     );
   }, []);
 
   return (
-      <FeedContext.Provider
-          value={{ posts, loading, error, setPosts, fetchPosts, addPost, deletePost, toggleLikeLocally }}
-      >
+      <FeedContext.Provider value={{ posts, loading, error, setPosts, fetchPosts, addPost, deletePost, updatePost }}>
         {children}
       </FeedContext.Provider>
   );
